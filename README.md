@@ -1,5 +1,9 @@
 # Waifu full local companion
 
+Example video
+
+[![Mi video](https://img.youtube.com/vi/4LkFELAaSyk/0.jpg)](https://youtu.be/4LkFELAaSyk)
+
 All these steps are maked to run your own full customizable waifu running fully in local
 you can make whatever your imagination or ideas tha you can have, because use : 
 
@@ -218,10 +222,3 @@ If you have questions/errors/bugs/ideas feel free to send me a message at `@kypa
 Happy hacking !
 
 
-
-
-
-
-
-
-# WaifuCompanionAI
