@@ -1,0 +1,196 @@
+{
+  "name": "WaifuCompanion",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        96
+      ],
+      "id": "23429fa6-c7e8-466b-823a-b8127cca75a2",
+      "name": "When chat message received",
+      "webhookId": "ce383393-7590-474c-bfcd-4e9ba81201d3"
+    },
+    {
+      "parameters": {
+        "options": {
+          "enableStreaming": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        288,
+        96
+      ],
+      "id": "fc7f0446-f8c7-460c-9a47-735a12e9c785",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        352,
+        320
+      ],
+      "id": "595193d2-6978-4532-b617-b253a4227240",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:5001/tts",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"text\": \"{{ $json.text.replace(/\\n/g, \"\\\\n\") }}\" }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1136,
+        192
+      ],
+      "id": "14cfd5d1-4ec3-48c9-be31-406ba1653d46",
+      "name": "HTTP Request to the tts_server.py"
+    },
+    {
+      "parameters": {
+        "model": "gpt-oss:latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        192,
+        304
+      ],
+      "id": "936fe3a8-415c-4696-b84d-b0260ae7a955",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "X1QzfTi0W5F2rva5",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const fullText = $input.first().json.output;\nconst match = fullText.match(/<\\|channel\\|>final<\\|message\\|>(.*)/s);\nreturn [\n  {\n    json: {\n      assistantText: match ? match[1].trim() : fullText\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        192
+      ],
+      "id": "7a702bf2-686f-46de-b93f-342674c03a55",
+      "name": "Code to filter reasoning output"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"text\": \"{{ $json.assistantText.replace(/\\n/g, \"\\\\n\") }}\"\n}",
+        "options": {}
+      },
+      "id": "f58abc06-9774-4091-a463-532b867b6371",
+      "name": "Cleaning the Json output",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        912,
+        192
+      ],
+      "typeVersion": 3.4
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code to filter reasoning output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request to the tts_server.py": {
+      "main": [
+        []
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code to filter reasoning output": {
+      "main": [
+        [
+          {
+            "node": "Cleaning the Json output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cleaning the Json output": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request to the tts_server.py",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cdad2db0-c725-4833-a752-ee9316db6e35",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c5adecaaf9f3120f54e78e359c0225d95b022db0319c75347a8a11b89c4986cd"
+  },
+  "id": "B61JyrjKmcV15QUw",
+  "tags": []
+}

@@ -59,6 +59,7 @@ gpt-oss runs in hybrid mode ( this means use GPU & CPU to generate responses )
 
 ```
 cd ./n8n
+bash install_n8n.sh
 bash run-n8n.sh
 ```
 

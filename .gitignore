@@ -1,0 +1,3 @@
+# ignoring tts server requirements
+local-tts/venv
+
