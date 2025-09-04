@@ -22,6 +22,10 @@ You wanna know how it works and run it ?
 
 Lets start !
 
+### Diagram Flow
+
+![Diagrama de flujo](./WaifuCompanionDiagramFlow.drawio.png)
+
 # Tested Requirements
 
 This currently works only in Linux for now, because i dont have much time to finish the Open AI hackthon,
